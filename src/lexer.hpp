@@ -9,7 +9,7 @@
 
 namespace blang {
 	struct Token {
-		enum class Type {
+		enum class Type : int {
 			INTEGER_VALUE,
 			CHAR_VALUE,
 			STRING_VALUE,
@@ -68,6 +68,8 @@ namespace blang {
 		Type type;
 		std::variant<std::string, std::array<std::byte, 4>, int> value;
 	};
+
+	std::ostream& operator<<(std::ostream&, const Token&);
 
 	class Lexer {
 		public:

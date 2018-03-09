@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <string>
 #include <sstream>
+#include <iomanip>
 #include <stdlib.h>
 #include <memory>
 
@@ -156,4 +157,18 @@ blang::Token blang::Lexer::next() {
     } while (token.type == Token::Type::NONE);
 
     return token;
+}
+
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+std::ostream& blang::operator<<(std::ostream& stream, const blang::Token& token) {
+	stream << std::to_string(static_cast<int>(token.type)) << "=";
+	std::visit(overloaded {
+		[&stream](const std::string& arg){stream << std::quoted(arg);},
+		[&stream](int arg){stream << std::to_string(arg);},
+		[&stream](const std::array<std::byte, 4>&){stream << std::quoted("...");}
+	}, token.value);
+	stream << "\n";
+	return stream;
 }
