@@ -1,12 +1,13 @@
 #include <iostream>
 #include <string>
+#include <iterator>
 
 #include "lexer.hpp"
 
 int main() {
-	std::string test = "auto a = b;";
-	blang::Lexer lexer(test);
-	auto token = lexer.next();
-	std::cout << token;
-	std::cout << "oh, hi\n";
+	std::istreambuf_iterator<char> begin(std::cin), end;
+	blang::Lexer lexer(std::string(begin, end));
+	for (auto token = lexer.next(); token.type != blang::Token::Type::END; token = lexer.next()) {
+		std::cout << token;
+	}
 }

@@ -139,13 +139,11 @@ blang::Lexer::Lexer(const std::string& input) : buffer(input) {
 }
 
 blang::Token blang::Lexer::next() {
-    Token token;
-
-    token.type = Token::Type::NONE;
+    Token token{ /*.type =*/ Token::Type::NONE, /*.value = */ 0 };
 
     do {
         if (cs >= Lexer_first_final) {
-            token.type = Token::Type::NONE;
+            token.type = Token::Type::END;
         }
 
         %%write exec;
