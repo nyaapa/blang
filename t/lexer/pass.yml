@@ -1,0 +1,9 @@
+---
+name: template
+in: auto i = 42;
+out:
+    - [ identifier, auto]
+    - [ identifier, i]
+    - [ assign ]
+    - [ integer_value, 42]
+    - [ delim ]
