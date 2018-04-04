@@ -15,18 +15,27 @@ std::stringstream strbuf;
 	alphtype unsigned long;
 	write data;
 
+	escapeSequences = '*'[0e()t*'"n];
+
+	action flattenEscapes {
+		switch ( ts[1] ) {
+			case '0': strbuf << '\0'; break;
+			case '(': strbuf <<  '{'; break;
+			case ')': strbuf <<  '}'; break;
+			case 't': strbuf << '\t'; break;
+			case 'n': strbuf << '\n'; break;
+			case 'e': strbuf << (char) 4; break;
+			
+			default:  strbuf << (char) ts[1];
+		}
+	}
+
 	number = digit+;
 
 	ws = [ \t\n];
 
 	qqstr := |*
-		'\\'["nt\\] => {
-			switch ( ts[1] ) {
-				case 'n': strbuf << "\n"; break;
-				case 't': strbuf << "\t"; break;
-				default:  strbuf << std::string(ts + 1, te);
-			}
-		};
+		escapeSequences => flattenEscapes;
 
 		[^"\\] => {
 			strbuf << std::string(ts, te);

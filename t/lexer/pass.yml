@@ -2,8 +2,17 @@
 name: template
 in: auto i = 42;
 out:
-    - [ identifier, auto]
-    - [ identifier, i]
+    - [ identifier, auto ]
+    - [ identifier, i ]
     - [ assign ]
-    - [ integer_value, 42]
+    - [ integer_value, 42 ]
+    - [ delim ]
+---
+name: string escapes
+in: auto s = "Morning!*tNice day for fishing!";
+out:
+    - [ identifier, auto ]
+    - [ identifier, s ]
+    - [ assign ]
+    - [ string_value, "Morning!\tNice day for fishing!" ]
     - [ delim ]
