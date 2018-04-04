@@ -15,7 +15,7 @@ use List::Util qw/max/;
 use Data::Dumper;
 
 (my $ABS = abs_path($0)) =~ s@/[^/]+$@@;
-my $BIN = "$ABS/../src/blang";
+my $BIN = "$ABS/../src/blangc";
 my $LEXER = "$ABS/../src/lexer.hpp";
 my $TOKENS = lexer_tokens();
 

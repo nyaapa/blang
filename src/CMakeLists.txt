@@ -25,4 +25,4 @@ add_custom_command(
 
 set(SOURCE_FILES ${SRC_FILES} ${RAGEL_FILES})
 
-add_executable(blang ${SRC_FILES} ${RagelOutput})
+add_executable(blangc ${SRC_FILES} ${RagelOutput})
