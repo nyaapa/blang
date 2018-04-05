@@ -68,7 +68,7 @@ namespace blang {
 		};
 
 		Type type;
-		std::variant<std::string, std::array<std::byte, 4>, int> value;
+		std::variant<std::string, int> value;
 	};
 
 	std::ostream& operator<<(std::ostream&, const Token&);

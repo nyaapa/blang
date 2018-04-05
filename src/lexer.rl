@@ -17,6 +17,16 @@ std::stringstream strbuf;
 
 	escapeSequences = '*'[0e()t*'"n];
 
+	action checkStrLiteral {
+		if (te == eof) {	
+			std::string val{strbuf.str()};
+			token.type = Token::Type::ERROR;
+			token.value = "Endless string literal: " + val.substr(0, 3) + (val.length() > 3 ? "..." : "");
+			fnext main;
+			fbreak;
+		}
+	}
+
 	action flattenEscapes {
 		switch ( ts[1] ) {
 			case '0': strbuf << '\0'; break;
@@ -27,6 +37,13 @@ std::stringstream strbuf;
 			case 'e': strbuf << (char) 4; break;
 			
 			default:  strbuf << (char) ts[1];
+		}
+
+		if (te == eof) {	
+			std::string val{strbuf.str()};
+			token.type = Token::Type::ERROR;
+			token.value = "Endless string literal: " + val.substr(0, 3) + (val.length() > 3 ? "..." : "");
+			fnext main;
 		}
 	}
 
@@ -39,13 +56,19 @@ std::stringstream strbuf;
 
 		[^"*] => {
 			strbuf << std::string(ts, te);
+
+			if (te == eof) {	
+				std::string val{strbuf.str()};
+				token.type = Token::Type::ERROR;
+				token.value = "Endless string literal: " + val.substr(0, 3) + (val.length() > 3 ? "..." : "");
+				fnext main;
+			}
 		};
 
 		'"' => {
 			token.type = Token::Type::STRING_VALUE;
 			token.value = std::string(strbuf.str());
 			fnext main;
-			fbreak;
 		};
 	*|;
 
@@ -54,6 +77,13 @@ std::stringstream strbuf;
 
 		[^'*] => {
 			strbuf << std::string(ts, te);
+
+			if (te == eof) {	
+				std::string val{strbuf.str()};
+				token.type = Token::Type::ERROR;
+				token.value = "Endless string literal: " + val.substr(0, 3) + (val.length() > 3 ? "..." : "");
+				fnext main;
+			}
 		};
 
 		"'" => {
@@ -178,7 +208,6 @@ std::ostream& blang::operator<<(std::ostream& stream, const blang::Token& token)
 	std::visit(overloaded {
 		[&stream](const std::string& arg){stream << std::quoted(arg);},
 		[&stream](int arg){stream << std::to_string(arg);},
-		[&stream](const std::array<std::byte, 4>&){stream << std::quoted("...");}
 	}, token.value);
 	stream << "\n";
 	return stream;

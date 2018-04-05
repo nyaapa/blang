@@ -31,3 +31,11 @@ out:
     - [ assign ]
     - [ error, "Character literal is too long: 12345" ]
     - [ delim ]
+---
+name: endless string 
+in: 'auto l = "aaaaa;'
+out:
+    - [ identifier, auto ]
+    - [ identifier, l ]
+    - [ assign ]
+    - [ error, "Endless string literal: aaa..." ]
