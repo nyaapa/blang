@@ -57,8 +57,14 @@ std::stringstream strbuf;
 		};
 
 		"'" => {
-			token.type = Token::Type::CHAR_VALUE;
-			token.value = std::string(strbuf.str());
+			std::string character{strbuf.str()};
+			if (character.length() <= 4) {
+				token.type = Token::Type::CHAR_VALUE;
+				token.value = std::move(character);
+			} else {
+				token.type = Token::Type::ERROR;
+				token.value = "Character literal is too long: " + character;
+			}
 			fnext main;
 			fbreak;
 		};

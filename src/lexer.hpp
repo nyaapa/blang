@@ -62,7 +62,9 @@ namespace blang {
 
 			END,
 
-			NONE
+			NONE,
+
+			ERROR
 		};
 
 		Type type;
