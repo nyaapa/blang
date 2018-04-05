@@ -9,10 +9,16 @@ out:
     - [ delim ]
 ---
 name: string escapes
-in: auto s = "Morning!*tNice day for fishing!";
+in: '"Morning!*tNice day for fishing!"'
 out:
-    - [ identifier, auto ]
-    - [ identifier, s ]
-    - [ assign ]
     - [ string_value, "Morning!\tNice day for fishing!" ]
-    - [ delim ]
+---
+name: char escapes {
+in: "'Huh*('"
+out:
+    - [ char_value, "Huh{" ]
+---
+name: char escapes *
+in: "'*)**!**'"
+out:
+    - [ char_value, "}*!*" ]

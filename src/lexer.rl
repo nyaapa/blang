@@ -37,7 +37,7 @@ std::stringstream strbuf;
 	qqstr := |*
 		escapeSequences => flattenEscapes;
 
-		[^"\\] => {
+		[^"*] => {
 			strbuf << std::string(ts, te);
 		};
 
@@ -50,16 +50,14 @@ std::stringstream strbuf;
 	*|;
 
 	qstr := |*
-		'\\'['\\] => {
-			strbuf << std::string(ts + 1, te);
-		};
+		escapeSequences => flattenEscapes;
 
-		'\\' | [^'\\] => {
+		[^'*] => {
 			strbuf << std::string(ts, te);
 		};
 
 		"'" => {
-			token.type = Token::Type::STRING_VALUE;
+			token.type = Token::Type::CHAR_VALUE;
 			token.value = std::string(strbuf.str());
 			fnext main;
 			fbreak;
