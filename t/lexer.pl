@@ -80,7 +80,9 @@ sub lexer_tokens() {
 	for (my $i = 0; $i < @data; ++$i) {
 		if ($inside) {
 			last if $data[$i] =~ /}/;
-			(my $cleaned = $data[$i]) =~ s/\s|,//g;
+			my $cleaned = $data[$i];
+			$cleaned =~ s@//.*$@@;
+			$cleaned =~ s/\s|,//g;
 			push @result, $cleaned if $cleaned;
 		} elsif ($data[$i] =~ /enum class Type/) {
 			$inside = 1;

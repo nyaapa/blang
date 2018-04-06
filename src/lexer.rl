@@ -136,10 +136,16 @@ std::stringstream strbuf;
 		'(' => { token.type = Token::Type::LPAREN; fbreak; };
 		')' => { token.type = Token::Type::RPAREN; fbreak; };
 
+		'++' => { token.type = Token::Type::INC; fbreak; };
+		'--' => { token.type = Token::Type::DEC; fbreak; };
+		'~'  => { token.type = Token::Type::NEG; fbreak; };
+
+		'*' => { token.type = Token::Type::STAR; fbreak; };
+		'&' => { token.type = Token::Type::AMPERSAND; fbreak; };
+
 		'+' => { token.type = Token::Type::PLUS; fbreak; };
 		'-' => { token.type = Token::Type::MINUS; fbreak; };
 
-		'*' => { token.type = Token::Type::MUL; fbreak; };
 		'/' => { token.type = Token::Type::DIV; fbreak; };
 		'%' => { token.type = Token::Type::MOD; fbreak; };
 

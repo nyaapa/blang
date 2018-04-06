@@ -40,14 +40,23 @@ out:
     - [ assign ]
     - [ error, "Endless string literal: aaa..." ]
 ---
-name: ops
-in: < = > <= == >= ! !=
+name: rel ops
+in: < > <= == >= !=
 out:
     - [ lt ]
-    - [ assign ]
     - [ gt ]
     - [ le ]
     - [ eq ]
     - [ ge ]
-    - [ not ]
     - [ ne ]
+---
+name: unary ops
+in: '++ -- * & - ! ~'
+out:
+    - [ inc ]
+    - [ dec ]
+    - [ star ]
+    - [ ampersand ]
+    - [ minus ]
+    - [ not ]
+    - [ neg ]

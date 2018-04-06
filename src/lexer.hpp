@@ -23,10 +23,18 @@ namespace blang {
 			LE,
 			LT,
 
+			INC,
+			DEC,
+			NEG,
+
+			// because it's 'indirection' and 'mul' at the same time
+			STAR,
+			// because it's 'and' and 'address' at the same time
+			AMPERSAND,
+
 			MINUS,
 			PLUS,
 			MOD,
-			MUL,
 			DIV,
 
 			TERNARY,
