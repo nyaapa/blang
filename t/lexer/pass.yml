@@ -60,3 +60,13 @@ out:
     - [ minus ]
     - [ not ]
     - [ neg ]
+---
+name: assign ops -- going to merge during parsing
+in: "= =+ =-"
+out:
+    - [ assign ]
+    - [ assign ]
+    - [ plus ]
+    - [ assign ]
+    - [ minus ]
+
