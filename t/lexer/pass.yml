@@ -39,3 +39,15 @@ out:
     - [ identifier, l ]
     - [ assign ]
     - [ error, "Endless string literal: aaa..." ]
+---
+name: ops
+in: < = > <= == >= ! !=
+out:
+    - [ lt ]
+    - [ assign ]
+    - [ gt ]
+    - [ le ]
+    - [ eq ]
+    - [ ge ]
+    - [ not ]
+    - [ ne ]

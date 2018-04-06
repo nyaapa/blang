@@ -17,11 +17,11 @@ namespace blang {
 			NOT,
 
 			GE,
-			GEQ,
+			GT,
 			EQ,
 			NE,
 			LE,
-			LEQ,
+			LT,
 
 			MINUS,
 			PLUS,

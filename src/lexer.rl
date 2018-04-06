@@ -144,12 +144,12 @@ std::stringstream strbuf;
 		'%' => { token.type = Token::Type::MOD; fbreak; };
 
 		'!' => { token.type = Token::Type::NOT; fbreak; };
-		'<' => { token.type = Token::Type::LE; fbreak; };
-		'<=' => { token.type = Token::Type::LEQ; fbreak; };
+		'<' => { token.type = Token::Type::LT; fbreak; };
+		'<=' => { token.type = Token::Type::LE; fbreak; };
 		'==' => { token.type = Token::Type::EQ; fbreak; };
 		'!=' => { token.type = Token::Type::NE; fbreak; };
-		'>=' => { token.type = Token::Type::GEQ; fbreak; };
-		'>' => { token.type = Token::Type::GE; fbreak; };
+		'>=' => { token.type = Token::Type::GE; fbreak; };
+		'>' => { token.type = Token::Type::GT; fbreak; };
 
 		':' => { token.type = Token::Type::COLON; fbreak; };
 		'?' => { token.type = Token::Type::TERNARY; fbreak; };
