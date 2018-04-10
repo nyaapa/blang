@@ -104,7 +104,7 @@ std::stringstream strbuf;
 
 		number => {
 			token.type = Token::Type::INTEGER_VALUE;
-			token.value = atoi(std::string(ts, te).c_str());
+			token.value = std::stoi(std::string(ts, te));
 			fbreak;
 		};
 
@@ -136,8 +136,8 @@ std::stringstream strbuf;
 		'(' => { token.type = Token::Type::LPAREN; fbreak; };
 		')' => { token.type = Token::Type::RPAREN; fbreak; };
 
-		'++' => { token.type = Token::Type::INC; fbreak; };
-		'--' => { token.type = Token::Type::DEC; fbreak; };
+		'++'  => { token.type = Token::Type::INC; fbreak; };
+		'--'  => { token.type = Token::Type::DEC; fbreak; };
 		'~'  => { token.type = Token::Type::NEG; fbreak; };
 
 		'*' => { token.type = Token::Type::STAR; fbreak; };
@@ -148,6 +148,9 @@ std::stringstream strbuf;
 
 		'/' => { token.type = Token::Type::DIV; fbreak; };
 		'%' => { token.type = Token::Type::MOD; fbreak; };
+		
+		'<<' => { token.type = Token::Type::SHL; fbreak; };
+		'>>' => { token.type = Token::Type::SHR; fbreak; };
 
 		'!' => { token.type = Token::Type::NOT; fbreak; };
 		'<' => { token.type = Token::Type::LT; fbreak; };
@@ -168,6 +171,16 @@ std::stringstream strbuf;
 		'.' => { token.type = Token::Type::DOT; fbreak; };
 
 		'=' => { token.type = Token::Type::ASSIGN; fbreak; };
+		'=-' => { token.type = Token::Type::ASSIGNMINUS; fbreak; };
+		'=+' => { token.type = Token::Type::ASSIGNPLUS; fbreak; };
+		'=%' => { token.type = Token::Type::ASSIGNMOD; fbreak; };
+		'=/' => { token.type = Token::Type::ASSIGNDIV; fbreak; };
+		'=<<' => { token.type = Token::Type::ASSIGNSHL; fbreak; };
+		'=>>' => { token.type = Token::Type::ASSIGNSHR; fbreak; };
+		'=|' => { token.type = Token::Type::ASSIGNOR; fbreak; };
+		'=^' => { token.type = Token::Type::ASSIGNXOR; fbreak; };
+		'=&' => { token.type = Token::Type::ASSIGNAND; fbreak; };
+		'=*' => { token.type = Token::Type::ASSIGNMUL; fbreak; };
 
 		'auto' => { token.type = Token::Type::AUTO; fbreak; };
 

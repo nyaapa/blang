@@ -36,6 +36,12 @@ namespace blang {
 			PLUS,
 			MOD,
 			DIV,
+			SHL,
+			SHR,
+
+			AND,
+			XOR,
+			OR,
 
 			TERNARY,
 			COLON,
@@ -48,10 +54,16 @@ namespace blang {
 			RETURN,
 
 			ASSIGN,
-
-			// Need to parse this two this way to solve conflicts with prefix ops "a =---b;"
 			ASSIGNMINUS,
 			ASSIGNPLUS,
+			ASSIGNMOD,
+			ASSIGNDIV,
+			ASSIGNSHL,
+			ASSIGNSHR,
+			ASSIGNXOR,
+			ASSIGNOR,
+			ASSIGNAND,
+			ASSIGNMUL,
 
 			COMMA,
 

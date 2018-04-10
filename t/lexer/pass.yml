@@ -62,11 +62,17 @@ out:
     - [ neg ]
 ---
 name: assign ops -- going to merge during parsing
-in: "= =+ =-"
+in: "= =+ =- =/ =% =<< =>> =& =* =^ =|"
 out:
     - [ assign ]
-    - [ assign ]
-    - [ plus ]
-    - [ assign ]
-    - [ minus ]
+    - [ assignplus ]
+    - [ assignminus ]
+    - [ assigndiv ]
+    - [ assignmod ]
+    - [ assignshl ]
+    - [ assignshr ]
+    - [ assignand ]
+    - [ assignmul ]
+    - [ assignxor ]
+    - [ assignor ]
 
