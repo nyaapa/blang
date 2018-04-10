@@ -49,6 +49,10 @@ namespace blang {
 
 			ASSIGN,
 
+			// Need to parse this two this way to solve conflicts with prefix ops "a =---b;"
+			ASSIGNMINUS,
+			ASSIGNPLUS,
+
 			COMMA,
 
 			DELIM,

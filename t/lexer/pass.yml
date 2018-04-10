@@ -19,9 +19,9 @@ out:
     - [ char_value, "Huh{" ]
 ---
 name: char escapes *
-in: "'*)**!**'"
+in: "'*)**!*''"
 out:
-    - [ char_value, "}*!*" ]
+    - [ char_value, "}*!'" ]
 ---
 name: char length enforcement 
 in: auto l = '12345';
