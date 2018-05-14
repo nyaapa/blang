@@ -23,6 +23,23 @@ add_custom_command(
 	COMMENT "Generating lexer.cpp"
 )
 
-set(SOURCE_FILES ${SRC_FILES} ${RAGEL_FILES})
+file(
+    GLOB_RECURSE
+    BISON_FILES
+    parser.yy
+)
 
-add_executable(blangc ${SRC_FILES} ${RagelOutput})
+find_package(BISON REQUIRED)
+set(BisonOutput parser.cc)
+add_custom_command(
+	OUTPUT ${BisonOutput}
+	COMMAND ${BISON_EXECUTABLE}
+		-o ${BisonOutput}
+		${BISON_FILES}
+	DEPENDS ${BISON_FILES}
+	COMMENT "Generating parser.cc"
+)
+
+set(SOURCE_FILES ${SRC_FILES} ${RAGEL_FILES} ${BISON_FILES})
+
+add_executable(blangc ${SRC_FILES} ${RagelOutput} ${BisonOutput})

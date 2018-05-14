@@ -222,12 +222,24 @@ blang::Token blang::Lexer::next() {
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
+int blang::Lexer::lex(Parser::semantic_type* val, blang::Parser::location_type* loc) {
+    auto token = this->next();
+    std::visit(overloaded {
+        [val](const std::string& arg){ val->build(arg); },
+        [val](int arg){ val->build(arg); },
+    }, token.value);
+    auto pos = blang::position();
+    *loc = blang::Parser::location_type(pos, pos);
+    // check for -1 and other spec values
+    return static_cast<int>(token.type);
+}
+
 std::ostream& blang::operator<<(std::ostream& stream, const blang::Token& token) {
-	stream << std::to_string(static_cast<int>(token.type)) << "=";
-	std::visit(overloaded {
-		[&stream](const std::string& arg){stream << std::quoted(arg);},
-		[&stream](int arg){stream << std::to_string(arg);},
-	}, token.value);
-	stream << "\n";
-	return stream;
+    stream << std::to_string(static_cast<int>(token.type)) << "=";
+    std::visit(overloaded {
+        [&stream](const std::string& arg){stream << std::quoted(arg);},
+        [&stream](int arg){stream << std::to_string(arg);},
+    }, token.value);
+    stream << "\n";
+    return stream;
 }

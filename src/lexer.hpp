@@ -5,7 +5,7 @@
 #include <variant>
 #include <cstddef>
 
-//#include "parser.hpp"
+#include "parser.hh"
 
 namespace blang {
 	struct Token {
@@ -102,6 +102,8 @@ namespace blang {
 			Lexer(const std::string&);
 
 			Token next();
+
+			int lex(Parser::semantic_type*, Parser::location_type*);
 
 		private:
 			// buffer state
