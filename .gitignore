@@ -1,5 +1,7 @@
 # generated parsers
 lexer.cpp
+*.hh
+*.cc
 
 # cmake
 CMakeCache.txt
@@ -8,4 +10,4 @@ Makefile
 cmake_install.cmake
 
 # out
-blang
+blangc
