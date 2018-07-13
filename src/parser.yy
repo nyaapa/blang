@@ -20,6 +20,7 @@
 }
 
 %parse-param { blang::Lexer& lexer }
+%parse-param { int& root }
 
 %type <int> T_INTEGER_VALUE
 %type <std::string> T_STRING_VALUE
@@ -107,6 +108,12 @@
 %type <int> int
 %type <std::string> str
 %%
+%start input;
+
+input
+	: int { root = $1; }
+	| str { root = $1.length(); }
+	;
 
 int
 	: T_INTEGER_VALUE T_PLUS T_INTEGER_VALUE { $$ = $1 + $3; }

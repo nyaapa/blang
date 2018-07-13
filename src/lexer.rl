@@ -5,7 +5,9 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <memory>
+
 #include "parser.hh"
+#include "overloaded.hpp"
 
 #pragma GCC diagnostic ignored "-Wsign-compare"<Paste>
 
@@ -220,16 +222,17 @@ blang::Token blang::Lexer::next() {
     return token;
 }
 
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
-
 int blang::Lexer::lex(Parser::semantic_type* val, blang::Parser::location_type*) {
-    auto token = this->next();
-    std::visit(overloaded {
-        [val](const std::string& arg){ val->build(arg); },
-        [val](int arg){ val->build(arg); },
-    }, token.value);
-    return token.type;
+	if (auto token = this->next(); token.type != blang::Parser::token_type::T_END) {
+		std::visit(overloaded {
+			[val](const std::string& arg){ val->build(arg); },
+			[val](int arg){ val->build(arg); },
+		}, token.value);
+
+    	return token.type;
+	} else {
+		return 0;
+	}
 }
 
 std::ostream& blang::operator<<(std::ostream& stream, const blang::Token& token) {
