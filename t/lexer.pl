@@ -16,6 +16,7 @@ use Data::Dumper;
 
 (my $ABS = abs_path($0)) =~ s@/[^/]+$@@;
 my $BIN = "$ABS/../src/blangc";
+my $LEX_ARG = "--lex";
 my $PARSER = "$ABS/../src/parser.hh";
 my $TOKENS = parser_tokens();
 
@@ -51,7 +52,7 @@ foreach my $fixture ( <$ABS/lexer/*.yml> ) {
 done_testing();
 
 sub lex_code($input) {
-	my $pid = open3(my $in, my $out, my $err, $BIN)
+	my $pid = open3(my $in, my $out, my $err, $BIN, $LEX_ARG)
 	or die "Can't run blangc: $!";
 
 	$in->print($input)
