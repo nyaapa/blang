@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <memory>
+#include "parser.hh"
 
 #pragma GCC diagnostic ignored "-Wsign-compare"<Paste>
 
@@ -20,7 +21,7 @@ std::stringstream strbuf;
 	action checkStrLiteral {
 		if (te == eof) {	
 			std::string val{strbuf.str()};
-			token.type = Token::Type::ERROR;
+			token.type = blang::Parser::token_type::T_ERROR;
 			token.value = "Endless string literal: " + val.substr(0, 3) + (val.length() > 3 ? "..." : "");
 			fnext main;
 			fbreak;
@@ -41,7 +42,7 @@ std::stringstream strbuf;
 
 		if (te == eof) {	
 			std::string val{strbuf.str()};
-			token.type = Token::Type::ERROR;
+			token.type = blang::Parser::token_type::T_ERROR;
 			token.value = "Endless string literal: " + val.substr(0, 3) + (val.length() > 3 ? "..." : "");
 			fnext main;
 		}
@@ -59,14 +60,14 @@ std::stringstream strbuf;
 
 			if (te == eof) {	
 				std::string val{strbuf.str()};
-				token.type = Token::Type::ERROR;
+				token.type = blang::Parser::token_type::T_ERROR;
 				token.value = "Endless string literal: " + val.substr(0, 3) + (val.length() > 3 ? "..." : "");
 				fnext main;
 			}
 		};
 
 		'"' => {
-			token.type = Token::Type::STRING_VALUE;
+			token.type = blang::Parser::token_type::T_STRING_VALUE;
 			token.value = std::string(strbuf.str());
 			fnext main;
 		};
@@ -80,7 +81,7 @@ std::stringstream strbuf;
 
 			if (te == eof) {	
 				std::string val{strbuf.str()};
-				token.type = Token::Type::ERROR;
+				token.type = blang::Parser::token_type::T_ERROR;
 				token.value = "Endless string literal: " + val.substr(0, 3) + (val.length() > 3 ? "..." : "");
 				fnext main;
 			}
@@ -89,10 +90,10 @@ std::stringstream strbuf;
 		"'" => {
 			std::string character{strbuf.str()};
 			if (character.length() <= 4) {
-				token.type = Token::Type::CHAR_VALUE;
+				token.type = blang::Parser::token_type::T_CHAR_VALUE;
 				token.value = std::move(character);
 			} else {
-				token.type = Token::Type::ERROR;
+				token.type = blang::Parser::token_type::T_ERROR;
 				token.value = "Character literal is too long: " + character;
 			}
 			fnext main;
@@ -103,15 +104,15 @@ std::stringstream strbuf;
 	main := |*
 
 		number => {
-			token.type = Token::Type::INTEGER_VALUE;
+			token.type = blang::Parser::token_type::T_INTEGER_VALUE;
 			token.value = std::stoi(std::string(ts, te));
 			fbreak;
 		};
 
-		'if'    => { token.type = Token::Type::IF; fbreak; };
-		'else'  => { token.type = Token::Type::ELSE; fbreak; };
-		'while'  => { token.type = Token::Type::WHILE; fbreak; };
-		'return' => { token.type = Token::Type::RETURN; fbreak; };
+		'if'    => { token.type = blang::Parser::token_type::T_IF; fbreak; };
+		'else'  => { token.type = blang::Parser::token_type::T_ELSE; fbreak; };
+		'while'  => { token.type = blang::Parser::token_type::T_WHILE; fbreak; };
+		'return' => { token.type = blang::Parser::token_type::T_RETURN; fbreak; };
 
 		'"' => {
 			strbuf.str("");
@@ -127,62 +128,62 @@ std::stringstream strbuf;
 
 		 ((0x0400..0x04FF) | [a-zA-Z0-9_])+ => {
 		  token.value = std::string(ts, te);
-		  token.type = Token::Type::IDENTIFIER; fbreak;
+		  token.type = blang::Parser::token_type::T_IDENTIFIER; fbreak;
 		 };
 
-		'{' => { token.type = Token::Type::LCURVE; fbreak; };
-		'}' => { token.type = Token::Type::RCURVE; fbreak; };
+		'{' => { token.type = blang::Parser::token_type::T_LCURVE; fbreak; };
+		'}' => { token.type = blang::Parser::token_type::T_RCURVE; fbreak; };
 
-		'(' => { token.type = Token::Type::LPAREN; fbreak; };
-		')' => { token.type = Token::Type::RPAREN; fbreak; };
+		'(' => { token.type = blang::Parser::token_type::T_LPAREN; fbreak; };
+		')' => { token.type = blang::Parser::token_type::T_RPAREN; fbreak; };
 
-		'++'  => { token.type = Token::Type::INC; fbreak; };
-		'--'  => { token.type = Token::Type::DEC; fbreak; };
-		'~'  => { token.type = Token::Type::NEG; fbreak; };
+		'++'  => { token.type = blang::Parser::token_type::T_INC; fbreak; };
+		'--'  => { token.type = blang::Parser::token_type::T_DEC; fbreak; };
+		'~'  => { token.type = blang::Parser::token_type::T_NEG; fbreak; };
 
-		'*' => { token.type = Token::Type::STAR; fbreak; };
-		'&' => { token.type = Token::Type::AMPERSAND; fbreak; };
+		'*' => { token.type = blang::Parser::token_type::T_STAR; fbreak; };
+		'&' => { token.type = blang::Parser::token_type::T_AMPERSAND; fbreak; };
 
-		'+' => { token.type = Token::Type::PLUS; fbreak; };
-		'-' => { token.type = Token::Type::MINUS; fbreak; };
+		'+' => { token.type = blang::Parser::token_type::T_PLUS; fbreak; };
+		'-' => { token.type = blang::Parser::token_type::T_MINUS; fbreak; };
 
-		'/' => { token.type = Token::Type::DIV; fbreak; };
-		'%' => { token.type = Token::Type::MOD; fbreak; };
+		'/' => { token.type = blang::Parser::token_type::T_DIV; fbreak; };
+		'%' => { token.type = blang::Parser::token_type::T_MOD; fbreak; };
 		
-		'<<' => { token.type = Token::Type::SHL; fbreak; };
-		'>>' => { token.type = Token::Type::SHR; fbreak; };
+		'<<' => { token.type = blang::Parser::token_type::T_SHL; fbreak; };
+		'>>' => { token.type = blang::Parser::token_type::T_SHR; fbreak; };
 
-		'!' => { token.type = Token::Type::NOT; fbreak; };
-		'<' => { token.type = Token::Type::LT; fbreak; };
-		'<=' => { token.type = Token::Type::LE; fbreak; };
-		'==' => { token.type = Token::Type::EQ; fbreak; };
-		'!=' => { token.type = Token::Type::NE; fbreak; };
-		'>=' => { token.type = Token::Type::GE; fbreak; };
-		'>' => { token.type = Token::Type::GT; fbreak; };
+		'!' => { token.type = blang::Parser::token_type::T_NOT; fbreak; };
+		'<' => { token.type = blang::Parser::token_type::T_LT; fbreak; };
+		'<=' => { token.type = blang::Parser::token_type::T_LE; fbreak; };
+		'==' => { token.type = blang::Parser::token_type::T_EQ; fbreak; };
+		'!=' => { token.type = blang::Parser::token_type::T_NE; fbreak; };
+		'>=' => { token.type = blang::Parser::token_type::T_GE; fbreak; };
+		'>' => { token.type = blang::Parser::token_type::T_GT; fbreak; };
 
-		':' => { token.type = Token::Type::COLON; fbreak; };
-		'?' => { token.type = Token::Type::TERNARY; fbreak; };
+		':' => { token.type = blang::Parser::token_type::T_COLON; fbreak; };
+		'?' => { token.type = blang::Parser::token_type::T_TERNARY; fbreak; };
 
-		'[' => { token.type = Token::Type::LSQUARE; fbreak; };
-		']' => { token.type = Token::Type::RSQUARE; fbreak; };
+		'[' => { token.type = blang::Parser::token_type::T_LSQUARE; fbreak; };
+		']' => { token.type = blang::Parser::token_type::T_RSQUARE; fbreak; };
 
-		';'+ => { token.type = Token::Type::DELIM; fbreak; };
-		',' => { token.type = Token::Type::COMMA; fbreak; };
-		'.' => { token.type = Token::Type::DOT; fbreak; };
+		';'+ => { token.type = blang::Parser::token_type::T_DELIM; fbreak; };
+		',' => { token.type = blang::Parser::token_type::T_COMMA; fbreak; };
+		'.' => { token.type = blang::Parser::token_type::T_DOT; fbreak; };
 
-		'=' => { token.type = Token::Type::ASSIGN; fbreak; };
-		'=-' => { token.type = Token::Type::ASSIGNMINUS; fbreak; };
-		'=+' => { token.type = Token::Type::ASSIGNPLUS; fbreak; };
-		'=%' => { token.type = Token::Type::ASSIGNMOD; fbreak; };
-		'=/' => { token.type = Token::Type::ASSIGNDIV; fbreak; };
-		'=<<' => { token.type = Token::Type::ASSIGNSHL; fbreak; };
-		'=>>' => { token.type = Token::Type::ASSIGNSHR; fbreak; };
-		'=|' => { token.type = Token::Type::ASSIGNOR; fbreak; };
-		'=^' => { token.type = Token::Type::ASSIGNXOR; fbreak; };
-		'=&' => { token.type = Token::Type::ASSIGNAND; fbreak; };
-		'=*' => { token.type = Token::Type::ASSIGNMUL; fbreak; };
+		'=' => { token.type = blang::Parser::token_type::T_ASSIGN; fbreak; };
+		'=-' => { token.type = blang::Parser::token_type::T_ASSIGNMINUS; fbreak; };
+		'=+' => { token.type = blang::Parser::token_type::T_ASSIGNPLUS; fbreak; };
+		'=%' => { token.type = blang::Parser::token_type::T_ASSIGNMOD; fbreak; };
+		'=/' => { token.type = blang::Parser::token_type::T_ASSIGNDIV; fbreak; };
+		'=<<' => { token.type = blang::Parser::token_type::T_ASSIGNSHL; fbreak; };
+		'=>>' => { token.type = blang::Parser::token_type::T_ASSIGNSHR; fbreak; };
+		'=|' => { token.type = blang::Parser::token_type::T_ASSIGNOR; fbreak; };
+		'=^' => { token.type = blang::Parser::token_type::T_ASSIGNXOR; fbreak; };
+		'=&' => { token.type = blang::Parser::token_type::T_ASSIGNAND; fbreak; };
+		'=*' => { token.type = blang::Parser::token_type::T_ASSIGNMUL; fbreak; };
 
-		'auto' => { token.type = Token::Type::AUTO; fbreak; };
+		'auto' => { token.type = blang::Parser::token_type::T_AUTO; fbreak; };
 
 		ws;
 
@@ -201,20 +202,20 @@ blang::Lexer::Lexer(const std::string& input) : buffer(input) {
 }
 
 blang::Token blang::Lexer::next() {
-    Token token{ /*.type =*/ Token::Type::NONE, /*.value = */ 0 };
+    Token token{ /*.type =*/ blang::Parser::token_type::T_NONE, /*.value = */ 0 };
 
     do {
         if (cs >= Lexer_first_final) {
-            token.type = Token::Type::END;
+            token.type = blang::Parser::token_type::T_END;
         }
 
         %%write exec;
         
         if (cs == Lexer_error) {
-            token.type = Token::Type::NONE;
+            token.type = blang::Parser::token_type::T_NONE;
             return token;
         }
-    } while (token.type == Token::Type::NONE);
+    } while (token.type == blang::Parser::token_type::T_NONE);
 
     return token;
 }
@@ -222,16 +223,13 @@ blang::Token blang::Lexer::next() {
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
-int blang::Lexer::lex(Parser::semantic_type* val, blang::Parser::location_type* loc) {
+int blang::Lexer::lex(Parser::semantic_type* val, blang::Parser::location_type*) {
     auto token = this->next();
     std::visit(overloaded {
         [val](const std::string& arg){ val->build(arg); },
         [val](int arg){ val->build(arg); },
     }, token.value);
-    auto pos = blang::position();
-    *loc = blang::Parser::location_type(pos, pos);
-    // check for -1 and other spec values
-    return static_cast<int>(token.type);
+    return token.type;
 }
 
 std::ostream& blang::operator<<(std::ostream& stream, const blang::Token& token) {

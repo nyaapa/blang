@@ -16,8 +16,8 @@ use Data::Dumper;
 
 (my $ABS = abs_path($0)) =~ s@/[^/]+$@@;
 my $BIN = "$ABS/../src/blangc";
-my $LEXER = "$ABS/../src/lexer.hpp";
-my $TOKENS = lexer_tokens();
+my $PARSER = "$ABS/../src/parser.hh";
+my $TOKENS = parser_tokens();
 
 foreach my $fixture ( <$ABS/lexer/*.yml> ) {
 	(my $relative = $fixture) =~ s@\Q$ABS/\E@@;
@@ -52,39 +52,39 @@ done_testing();
 
 sub lex_code($input) {
 	my $pid = open3(my $in, my $out, my $err, $BIN)
-		or die "Can't run blangc: $!";
+	or die "Can't run blangc: $!";
 
 	$in->print($input)
-		or die "Can't feed $input: $!";
+	or die "Can't feed $input: $!";
 
 	close($in)
-		or warn "Can't close cl stdin: $!";
+	or warn "Can't close cl stdin: $!";
 
 	my $result = join "", <$out>;
 	waitpid($pid, 0);
 
 	my $child_exit_status = $? >> 8;
 	$child_exit_status
-		and die "Bad exitcode from lexer: $child_exit_status"; 
+	and die "Bad exitcode from lexer: $child_exit_status"; 
 
 	return $result;
 }
 
-sub lexer_tokens() {
-	my @data = read_file($LEXER)
-		or die "Can't read $LEXER: $!";
+sub parser_tokens() {
+	my @data = read_file($PARSER)
+	or die "Can't read $PARSER: $!";
 
 	my @result = ();
 
 	my $inside = 0;
-	for (my $i = 0; $i < @data; ++$i) {
+	foreach my $line (@data) {
 		if ($inside) {
-			last if $data[$i] =~ /}/;
-			my $cleaned = $data[$i];
-			$cleaned =~ s@//.*$@@;
-			$cleaned =~ s/\s|,//g;
-			push @result, $cleaned if $cleaned;
-		} elsif ($data[$i] =~ /enum class Type/) {
+			last if $line =~ /}/;
+
+			if (my ($token, $id) = $line =~ /^\s*T_(\w+)\s*=\s*(\d+),?\s*$/) {
+				$result[$id] = $token;
+			}
+		} elsif ($line =~ /enum yytokentype/) {
 			$inside = 1;
 		}
 	}
