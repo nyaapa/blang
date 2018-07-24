@@ -46,17 +46,38 @@ int main(int argc, char** argv) {
 		for (auto token = lexer.next(); token.type != blang::Parser::token_type::T_END; token = lexer.next()) {
 			std::cout << token;
 		}
-	} else if (parse) {
+	} else {
 		std::variant<int, std::string> result;
 		blang::Parser parser{lexer, result};
 
 		if ( auto err = parser.parse() )
 			throw std::runtime_error("Error while parsing: " + std::to_string(err));
 
-		std::visit(overloaded {
-			[](const std::string& arg){std::cout << std::quoted(arg);},
-			[](int arg){std::cout << std::to_string(arg);},
-		}, result);
-		std::cout << "\n";
+		if (parse) {
+			std::visit(overloaded {
+				[](const std::string& arg){std::cout << std::quoted(arg);},
+				[](int arg){std::cout << std::to_string(arg);},
+			}, result);
+			std::cout << "\n";
+		} else {
+			std::string data;
+			std::visit(overloaded {
+				[&data](const std::string& arg){data = arg;},
+				[&data](int arg){data = std::to_string(arg);},
+			}, result);
+			std::cout << "section .data\n";
+			std::cout << "\tmsg db " << std::quoted(data) << "\n\n";
+			std::cout << "section .text\n";
+    		std::cout << "\tglobal _start\n";
+			std::cout << "_start:\n";
+			std::cout << "\tmov rax, 1\n";
+			std::cout << "\tmov rdi, 1\n";
+			std::cout << "\tmov rsi, msg\n";
+			std::cout << "\tmov rdx, " << data.length() <<"\n";
+			std::cout << "\tsyscall\n";
+			std::cout << "\tmov rax, 60\n";
+			std::cout << "\tmov rdi, 0\n";
+			std::cout << "\tsyscall\n";
+		}
 	}
 }
