@@ -224,10 +224,11 @@ blang::Token blang::Lexer::next() {
 
 int blang::Lexer::lex(Parser::semantic_type* val, blang::Parser::location_type*) {
 	if (auto token = this->next(); token.type != blang::Parser::token_type::T_END) {
-		std::visit(overloaded {
-			[val](const std::string& arg){ val->build(arg); },
-			[val](int arg){ val->build(arg); },
-		}, token.value);
+		switch (token.type) {
+			case blang::Parser::token_type::T_INTEGER_VALUE: val->build<int>(std::get<int>(token.value)); break;
+			case blang::Parser::token_type::T_STRING_VALUE: val->build<std::string>(std::get<std::string>(token.value)); break;
+			default: ;
+		}
 
     	return token.type;
 	} else {

@@ -10,6 +10,7 @@
 %code requires {
 	#include <list>
 	#include <string>
+	#include <variant>
 
 	namespace blang { class Lexer; }
 }
@@ -20,7 +21,7 @@
 }
 
 %parse-param { blang::Lexer& lexer }
-%parse-param { int& root }
+%parse-param { std::variant<int, std::string>& root }
 
 %type <int> T_INTEGER_VALUE
 %type <std::string> T_STRING_VALUE
@@ -112,7 +113,7 @@
 
 input
 	: int { root = $1; }
-	| str { root = $1.length(); }
+	| str { root = $1; }
 	;
 
 int

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <iterator>
+#include <variant>
+#include <iomanip>
 
 #include "../lib/cxxopts/cxxopts.hpp"
 
@@ -45,10 +47,16 @@ int main(int argc, char** argv) {
 			std::cout << token;
 		}
 	} else if (parse) {
-		int result;
+		std::variant<int, std::string> result;
 		blang::Parser parser{lexer, result};
+
 		if ( auto err = parser.parse() )
 			throw std::runtime_error("Error while parsing: " + std::to_string(err));
-		std::cout << result << "\n";
+
+		std::visit(overloaded {
+			[](const std::string& arg){std::cout << std::quoted(arg);},
+			[](int arg){std::cout << std::to_string(arg);},
+		}, result);
+		std::cout << "\n";
 	}
 }
