@@ -29,15 +29,26 @@ namespace blang {
 
                 std::cout << "\tmov rdi, 1\n";
                 for (auto it = arg->val.rbegin(); it != arg->val.rend();) {
-                    ulong value = 0;
+                    ulong lvalue = 0;
                     for (int i = 0; i < 4; ++i) {
-                        value <<= 8;
+                        lvalue <<= 8;
                         if (it != arg->val.rend()) {
-                            value |= static_cast<unsigned char>(*it);
+                            lvalue |= static_cast<unsigned char>(*it);
                             ++it;
                         }
                     }
-                    std::cout << "\tpush " << value << "\n";
+                    ulong rvalue = 0;
+                    for (int i = 0; i < 4; ++i) {
+                        rvalue <<= 8;
+                        if (it != arg->val.rend()) {
+                            rvalue |= static_cast<unsigned char>(*it);
+                            ++it;
+                        }
+                    }
+                    std::cout << "\tmov rax, " << lvalue << "\n";
+                    std::cout << "\tshl rax, 32\n";
+                    std::cout << "\tor rax, " << rvalue << "\n";
+                    std::cout << "\tpush qword rax\n";
                 }
                 std::cout << "\tmov rax, 1\n";
                 std::cout << "\tmov rsi, rsp\n";
