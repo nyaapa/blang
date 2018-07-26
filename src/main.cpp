@@ -3,12 +3,15 @@
 #include <iterator>
 #include <variant>
 #include <iomanip>
+#include <memory>
 
 #include "../lib/cxxopts/cxxopts.hpp"
 
 #include "lexer.hpp"
 #include "parser.hh"
 #include "overloaded.hpp"
+
+#include "fun.hpp"
 
 int main(int argc, char** argv) {
     cxxopts::Options options("blangc", " - b language compiler");
@@ -47,24 +50,24 @@ int main(int argc, char** argv) {
 			std::cout << token;
 		}
 	} else {
-		std::variant<int, std::string> result;
+		std::shared_ptr<blang::fun> result;
 		blang::Parser parser{lexer, result};
 
 		if ( auto err = parser.parse() )
 			throw std::runtime_error("Error while parsing: " + std::to_string(err));
 
 		if (parse) {
-			std::visit(overloaded {
-				[](const std::string& arg){std::cout << std::quoted(arg);},
-				[](int arg){std::cout << std::to_string(arg);},
-			}, result);
+			// std::visit(overloaded {
+			// 	[](const std::string& arg){std::cout << std::quoted(arg);},
+			// 	[](int arg){std::cout << std::to_string(arg);},
+			// }, result);
 			std::cout << "\n";
 		} else {
-			std::string data;
-			std::visit(overloaded {
-				[&data](const std::string& arg){data = arg;},
-				[&data](int arg){data = std::to_string(arg);},
-			}, result);
+			std::string data = result->exprs.front()->val;
+			// std::visit(overloaded {
+			// 	[&data](const std::string& arg){data = arg;},
+			// 	[&data](int arg){data = std::to_string(arg);},
+			// }, result);
 			std::cout << "section .data\n";
 			std::cout << "\tmsg db " << std::quoted(data) << "\n\n";
 			std::cout << "section .text\n";

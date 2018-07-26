@@ -72,6 +72,7 @@ std::stringstream strbuf;
 			token.type = blang::Parser::token_type::T_STRING_VALUE;
 			token.value = std::string(strbuf.str());
 			fnext main;
+			fbreak;
 		};
 	*|;
 
@@ -226,6 +227,7 @@ int blang::Lexer::lex(Parser::semantic_type* val, blang::Parser::location_type*)
 	if (auto token = this->next(); token.type != blang::Parser::token_type::T_END) {
 		switch (token.type) {
 			case blang::Parser::token_type::T_INTEGER_VALUE: val->build<int>(std::get<int>(token.value)); break;
+			case blang::Parser::token_type::T_IDENTIFIER:
 			case blang::Parser::token_type::T_STRING_VALUE: val->build<std::string>(std::get<std::string>(token.value)); break;
 			default: ;
 		}

@@ -11,20 +11,26 @@
 	#include <list>
 	#include <string>
 	#include <variant>
+	#include <memory>
 
-	namespace blang { class Lexer; }
+	namespace blang { class Lexer; class expr; class fun; }
 }
 
 %code {
 	#include "lexer.hpp"
+	
+	#include "fun.hpp"
+	#include "expr.hpp"
+	
 	#define yylex lexer.lex
 }
 
 %parse-param { blang::Lexer& lexer }
-%parse-param { std::variant<int, std::string>& root }
+%parse-param { std::shared_ptr<blang::fun>& root }
 
 %type <int> T_INTEGER_VALUE
 %type <std::string> T_STRING_VALUE
+%type <std::string> T_IDENTIFIER
 
 %token T_INTEGER_VALUE
 %token T_CHAR_VALUE
@@ -108,13 +114,31 @@
 
 %type <int> int
 %type <std::string> str
+//%type <blang::fun> fun
+%type <std::list<std::shared_ptr<blang::expr>>> block
+%type <std::list<std::shared_ptr<blang::expr>>> exprs
+%type <std::shared_ptr<blang::expr>> expr
 %%
-%start input;
+%start fun;
 
-input
-	: int { root = $1; }
-	| str { root = $1; }
+fun
+	: T_IDENTIFIER T_LPAREN T_RPAREN block { root = std::make_shared<blang::fun>($1, $4); }
 	;
+
+block
+	: T_LCURVE T_RCURVE { $$ = std::list<std::shared_ptr<blang::expr>>(); }
+	| T_LCURVE exprs T_RCURVE { $$ = std::move($2); }
+	;
+
+exprs
+	: expr T_DELIM { $$.emplace_back(std::move($1)); }
+	| expr T_DELIM exprs { $$ = std::move($3); $$.emplace_back(std::move($1)); }
+	;
+
+expr
+	: int { $$ = std::make_shared<blang::expr>($1); }
+	| str { $$ = std::make_shared<blang::expr>($1); }
+	; 
 
 int
 	: T_INTEGER_VALUE T_PLUS T_INTEGER_VALUE { $$ = $1 + $3; }
