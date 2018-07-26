@@ -63,21 +63,10 @@ int main(int argc, char** argv) {
 			// }, result);
 			std::cout << "\n";
 		} else {
-			std::string data = result->exprs.front()->val;
-			// std::visit(overloaded {
-			// 	[&data](const std::string& arg){data = arg;},
-			// 	[&data](int arg){data = std::to_string(arg);},
-			// }, result);
-			std::cout << "section .data\n";
-			std::cout << "\tmsg db " << std::quoted(data) << "\n\n";
 			std::cout << "section .text\n";
     		std::cout << "\tglobal _start\n";
 			std::cout << "_start:\n";
-			std::cout << "\tmov rax, 1\n";
-			std::cout << "\tmov rdi, 1\n";
-			std::cout << "\tmov rsi, msg\n";
-			std::cout << "\tmov rdx, " << data.length() <<"\n";
-			std::cout << "\tsyscall\n";
+			result->exprs.front()->cgen();
 			std::cout << "\tmov rax, 60\n";
 			std::cout << "\tmov rdi, 0\n";
 			std::cout << "\tsyscall\n";
