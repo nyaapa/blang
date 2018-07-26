@@ -29,32 +29,23 @@ namespace blang {
 
                 std::cout << "\tmov rdi, 1\n";
                 for (auto it = arg->val.rbegin(); it != arg->val.rend();) {
-                    ulong lvalue = 0;
-                    for (int i = 0; i < 4; ++i) {
-                        lvalue <<= 8;
+                    ulong value = 0;
+                    for (int i = 0; i < 8; ++i) {
+                        value <<= 8;
                         if (it != arg->val.rend()) {
-                            lvalue |= static_cast<unsigned char>(*it);
+                            value |= static_cast<unsigned char>(*it);
                             ++it;
                         }
                     }
-                    ulong rvalue = 0;
-                    for (int i = 0; i < 4; ++i) {
-                        rvalue <<= 8;
-                        if (it != arg->val.rend()) {
-                            rvalue |= static_cast<unsigned char>(*it);
-                            ++it;
-                        }
-                    }
-                    std::cout << "\tmov rax, " << lvalue << "\n";
-                    std::cout << "\tshl rax, 32\n";
-                    std::cout << "\tor rax, " << rvalue << "\n";
+                    std::cout << "\tmov rax, " << value << "\n";
                     std::cout << "\tpush qword rax\n";
                 }
                 std::cout << "\tmov rax, 1\n";
                 std::cout << "\tmov rsi, rsp\n";
-                std::cout << "\tmov rdx, " << arg->val.length() * 2 <<"\n";
+                uint qwords = (arg->val.length() + 7) / 8 * 8;
+                std::cout << "\tmov rdx, " << qwords << "\n";
                 std::cout << "\tsyscall\n";
-                std::cout << "\tadd rsp, " << arg->val.length() / 4 << "\n";
+                std::cout << "\tadd rsp, " << qwords << "\n";
             }
 
             const std::string fname;
