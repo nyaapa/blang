@@ -13,20 +13,21 @@
 	#include <variant>
 	#include <memory>
 
-	namespace blang { class Lexer; class expr; class fun; }
+	namespace blang { class Lexer; class expr; class fun; class source; }
 }
 
 %code {
 	#include "lexer.hpp"
 	
 	#include "fun.hpp"
+	#include "source.hpp"
 	#include "expr.hpp"
 	
 	#define yylex lexer.lex
 }
 
 %parse-param { blang::Lexer& lexer }
-%parse-param { std::shared_ptr<blang::fun>& root }
+%parse-param { blang::source& source }
 
 %type <int> T_INTEGER_VALUE
 %type <std::string> T_STRING_VALUE
@@ -122,7 +123,7 @@
 %start fun;
 
 fun
-	: T_IDENTIFIER T_LPAREN T_RPAREN block { root = std::make_shared<blang::fun>($1, $4); }
+	: T_IDENTIFIER T_LPAREN T_RPAREN block { source.add_fun(std::make_shared<blang::fun>($1, $4)); }
 	;
 
 block

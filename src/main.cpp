@@ -11,7 +11,7 @@
 #include "parser.hh"
 #include "overloaded.hpp"
 
-#include "fun.hpp"
+#include "source.hpp"
 
 int main(int argc, char** argv) {
     cxxopts::Options options("blangc", " - b language compiler");
@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 			std::cout << token;
 		}
 	} else {
-		std::shared_ptr<blang::fun> result;
+		blang::source result;
 		blang::Parser parser{lexer, result};
 
 		if ( auto err = parser.parse() )
@@ -63,13 +63,7 @@ int main(int argc, char** argv) {
 			// }, result);
 			std::cout << "\n";
 		} else {
-			std::cout << "section .text\n";
-    		std::cout << "\tglobal _start\n";
-			std::cout << "_start:\n";
-			result->exprs.front()->cgen();
-			std::cout << "\tmov rax, 60\n";
-			std::cout << "\tmov rdi, 0\n";
-			std::cout << "\tsyscall\n";
+			result.cgen();
 		}
 	}
 }
