@@ -137,14 +137,14 @@ exprs
 	;
 
 expr
-	: int { $$ = std::make_shared<blang::expr>($1); }
+	: int { $$ = std::make_shared<blang::intc>($1); }
 	| str { $$ = std::make_shared<blang::expr>($1); }
 	| T_IDENTIFIER T_LPAREN expr T_RPAREN { $$ = std::make_shared<blang::fcall>($1, $3); }
+ 	| expr T_PLUS expr { $$ = std::make_shared<blang::sum>($1, $3); }
 	; 
 
 int
-	: T_INTEGER_VALUE T_PLUS T_INTEGER_VALUE { $$ = $1 + $3; }
-	| T_INTEGER_VALUE { $$ = $1; }
+	: T_INTEGER_VALUE { $$ = $1; }
 	;
 
 str
